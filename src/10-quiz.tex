@@ -1,0 +1,80 @@
+\documentclass[a4paper,ngerman,12pt]{exam}
+\usepackage{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{csquotes} % Anführungszeichen
+\usepackage{paralist} % kompakte Aufzählungen
+\usepackage{textcomp,tikz} %diverses
+\usepackage{amsmath,amssymb,amstext,amsthm}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{mdframed} % Boxen
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows, automata}
+
+\geometry{a4paper, top=3cm, left=2.7cm, right=2.7cm}
+\pagestyle{plain}
+\renewcommand{\solutiontitle}{\noindent\textbf{Lösung:}\enspace}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\renewcommand\L{\mathcal{L}}
+\newcommand\ST{\Sigma_{\mathrm{T}}}
+\newcommand\SN{\Sigma_{\mathrm{N}}}
+
+%\printanswers
+
+\begin{document}
+\noindent Theoretische Informatik \hfill Gruppe 8 \\
+\mbox{}\hfill Loris Reiff
+\begin{center}
+  \bfseries\Large
+  Quiz 10 \ifprintanswers
+  -- Lösungen
+\fi
+\end{center}
+
+
+\begin{questions}
+\question
+  Seien $f: \mathbb{N} \to \mathbb{N}$ und $g: \mathbb{N} \to \mathbb{N}$ zwei platzkonstruierbare Funktionen.
+  Ist $h: \mathbb{N} \to \mathbb{N}$ mit $h(n) = f(n)\cdot g(n)$ auch platzkonstruierbar?
+  \begin{checkboxes}
+    \CorrectChoice Ja
+    \choice Falsch
+  \end{checkboxes}
+  \begin{solution} $ $ \\
+      Beweis auf Tafel
+  \end{solution}
+  \question
+  Zeige, dass $2^n$ Zeitkonstruierbar ist.
+  \begin{solutionorbox}[14em] $ $ \\
+      Sei $M$ eine MTM (Mehrband Turingmaschine) mit 2 Bändern die $f(n) = 2^n$ wie folgt konstruiert:
+      Zuerst schreibe eine 0 auf das erste Band.
+
+      Nun wird für jedes Zeichen in der Eingabe der Inhalt des ersten Bandes auf das zweite kopiert und dann der ganze Inhalt des zweiten Bandes an den des ersten angehängt. Dies braucht im $i$-ten Durchlauf dreimal $2^{i-1}$ Schritte: Wenn vor dem $i$-ten Durchlauf der Kopf auf dem ersten Band am Ende des bisher konstruierten $0^{2^{i-1}}$ steht und auf dem zweiten Band am Anfang, dann werden je $2^{i-1}$ Schritte für das Kopieren vom ersten aufs zweite Band und das Rücksetzen des Kopfes auf dem ersten Band sowie weitere $2^{i-1}$ Schritte für das Anhängen auf dem ersten Band benötigt.
+
+      Beginnend mit 0 auf dem ersten Band (ein Wort der Länge $1 = 2^0$) hat $M$ offensichtlich nach dem Lesen von $n$ Eingabezeichen das Wort $0^{(2^n)}$ auf dem ersten Band stehen, es wird also $f(n)$ konstruiert. Die totale Laufzeit beträgt:
+
+      \begin{align}
+          \text{Time}_M(n) &= \sum_{i=1}^{n} 3\cdot 2^{i-1} = 3 \cdot (2^n - 2) \leq 3 \cdot 2^n \in \mathcal{O}\left(f\left(n\right)\right)
+      \end{align}
+  \end{solutionorbox}
+  \question
+  Welche Aussage ist korrekt?
+  \begin{checkboxes}
+    \choice PSPACE $\subseteq$ DLOG
+    \CorrectChoice DLOG $\subseteq$ PSPACE
+  \end{checkboxes}
+\question Gib es einen Polynomialzeit-Verifizierer für das Vertex Cover Problem? Falls ja,
+  wie \textit{lautet} er?
+\begin{solutionorbox}[9em]
+  Ja, prüfe für jede Kante $\{u,v\}$ ob $u$ oder $v$ in Set sind und zähle $\implies \leq k$
+\end{solutionorbox}
+\end{questions}
+
+\end{document}

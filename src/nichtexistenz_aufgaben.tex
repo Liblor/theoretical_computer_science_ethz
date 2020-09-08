@@ -1,0 +1,446 @@
+\documentclass[a4paper,ngerman,12pt]{exam}
+\usepackage{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{paralist} % kompakte Aufzählungen
+\usepackage{textcomp,tikz} %diverses
+\usepackage{amsmath,amssymb,amstext,amsthm}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{float}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows, automata}
+\usepackage{geometry}
+
+\geometry{a4paper, top=3cm, left=2.7cm, right=2.7cm}
+\renewcommand{\solutiontitle}{\noindent\textbf{Lösung:}\enspace}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+%\printanswers
+
+\begin{document}
+%$ $\\
+\noindent Theoretische Informatik \hfill Gruppe 8
+
+\hfill Loris Reiff
+
+\begin{center}
+  \bfseries\Large
+  Beweise der Nichtexistenz \ifprintanswers
+  -- Lösungen
+  \else
+  -- Aufgaben
+\fi
+\end{center}
+
+\begin{questions}
+\question
+Zeige dass
+\begin{align*}
+  L = \{w \in \{a,b\}^* \mid |w|_a = |w|_b\} \not\in \mathcal{L}_{\mathrm{EA}}
+\end{align*}
+  \textit{(Aufgabe 3.14 (a) aus dem Buch / Quiz 4)}
+    \begin{solutionorbox}[18em]
+      \begin{proof}[Beweis mittels Lemma 3.3] $ $\\
+    Angenommen $L$ sei regulär.
+    Es gibt also einen EA $A = (Q, \{a, b\}, \hat{\delta}_A, q_0, F)$ mit $L(A) = L$.
+    Beachten wir die Wörter
+    \begin{align*}
+      a, aa, \dots , a^{|Q|+1}
+    \end{align*}
+    Es existieren also $i, j \in \{1, 2, \dots, |Q|+1\}$ mit $i < j$
+    und
+    \begin{align*}
+      \hat{\delta}_A(q_0, a^i) &= \hat{\delta}_A(q_0, a^j)
+    \end{align*}
+    (Schubfachprinzip)\\
+    Gemäss Lemma 3.3 im Buch gilt somit
+    \begin{align*}
+      a^i z \in L &\iff a^j z \in L
+    \end{align*}
+    für alle $z \in \{a, b\}^*$. Für $z = b^i$ haben wir aber einen Widerspruch:
+    $a^i b^i \in L$ und $a^j b^i \not\in L$. Das heisst also, dass
+    $L$ nicht regulär ist.
+      \end{proof}
+
+      \hrule
+
+      \begin{proof}[Mittels Pumping-Lemma:] $ $\\
+        Annahme $L$ ist regulär. Betrachten wir nun das Wort
+        \begin{align*}
+          w = a^{n_0}b^{n_0}
+        \end{align*}
+        Offensichtlich gilt $|w| = 2n_0 \geq n_0$.
+        Folglich gibt es gemäss dem Pumping-Lemma, für das Wort $w$, eine Zerlegung
+        $w = yxz$, wobei
+        \begin{enumerate}[(i)]
+          \item $|yx| \leq n_0$
+          \item $|x| \geq 1$
+          \item entweder $\{y x^k z \mid k \in \mathbb{N}\} \subseteq L$
+            oder $\{y x^k z \mid k \in \mathbb{N}\} \cap L = \emptyset$
+        \end{enumerate}
+        Nach (i) gibt es $y = a^l$ und $x = a^m$ für $l,m \in \mathbb{N}$
+        mit $l+m \leq n_0$. Nach (ii) gilt $m \geq 1$. Und weil
+        $w = a^{n_0}b^{n_0} \in L$ ist, muss also
+        $\{y x^k z \mid k \in \mathbb{N}\} \subseteq L$ gelten. Dies ist aber ein
+        Widerspruch, da $yx^0z = yz = a^{n_0-m}b^{n_0} \not\in L$. Somit ist
+        $L \not\in \mathcal{L}_{\mathrm{EA}}$
+      \end{proof}
+    \end{solutionorbox}
+    \question
+  Beweise, dass der EA für $L$ mindestens 8 Zustände braucht ($|Q| \geq 8$)
+  \begin{align*}
+    L &= \{0, 01, 101, 10001\} \subseteq \{0,1\}^*
+  \end{align*}
+
+   \begin{solutionorbox}[20em]
+  \begin{proof} $ $\\
+    Sei $A = (Q, \{0,1\}, \delta,q_0,F)$ ein EA
+    mit $L(A) = L$ und angenommen
+    $|Q| < 8$.\\
+    Betrachten wir die Wörter
+    \begin{align*}
+      \lambda, 0, 1, 10, 100, 1000 , 10001, 11111
+    \end{align*}
+    Auf Grund des Schubfachprinzipes gibt es also unter den Wörter
+    ein Wort $x$ und $y$ mit $x < y$ (kanonisch) und
+    $\hat{\delta}(q_0, x) = \hat{\delta}(q_0, y)$. \\
+    Gemäss Lemma 3.3 gilt also für alle $z \in \{0,1\}^*$
+    \begin{align*}
+      xz \in L(A) \iff yz \in L(A)
+    \end{align*}
+    Wenn wir eine Fallunterscheidung durchführen, sehen wird jedoch,
+    dass es jeweils zu einem Widerspruch kommt.
+
+    \input{cases.tex}
+  \end{proof}
+    \textit{Es sieht nach mehr Arbeit aus, als es ist. Alle Fälle
+    ausser $x = 0$ verwenden immer ein $z$ für jedes $y$.
+    Es reicht (meiner Ansicht nach) vollkommen für jeden Fall ($x \neq 0$)
+    jeweils nur $z$ anzugeben und zu erwähnen, dass es offensichtlich zu einem
+    Widerspruch führt.}
+   \end{solutionorbox}
+
+   \question
+
+   Zeige, dass die Sprache $L$ nicht regulär ist
+    \begin{align*}
+    L = \{ww \mid w \in \left(\Sigma_{\mathrm{bool}}\right)^*\}
+    \end{align*}
+     \vspace{-2em}
+    \begin{solutionorbox}[22em]
+      \begin{proof}[Beweis mittels Lemma 3.3] $ $\\
+    Angenommen $L$ sei regulär.
+    Es gibt also einen EA $A = (Q, \{0, 1\}, \hat{\delta}_A, q_0, F)$ mit $L(A) = L$.
+    Beachten wir die Wörter
+    \begin{align*}
+      01, 001, \dots , 0^{|Q|+1}1
+    \end{align*}
+    Es existieren also $i, j \in \{1, 2, \dots, |Q|+1\}$ mit $i < j$
+    und
+    \begin{align*}
+      \hat{\delta}_A(q_0, 0^i1) &= \hat{\delta}_A(q_0, 0^j1)
+    \end{align*}
+    (Schubfachprinzip)\\
+    Gemäss Lemma 3.3 im Buch gilt somit
+    \begin{align*}
+      0^i1 z \in L &\iff 0^j1 z \in L
+    \end{align*}
+    für alle $z \in \{0, 1\}^*$. Für $z = 0^i1$ haben wir aber einen Widerspruch:
+    $0^i1 0^i1 \in L$ und $0^j1 0^i1 \not\in L$, da $i < j$. Das heisst also, dass
+    $L$ nicht regulär ist.
+      \end{proof}
+
+      \hrule
+
+      \begin{proof}[Mittels Pumping-Lemma:] $ $\\
+        Angenommen $L$ sei regulär. Betrachten wir nun das Wort
+        \begin{align*}
+          w = 0^{n_0}10^{n_0}1
+        \end{align*}
+        Offensichtlich gilt $|w| = 2n_0 + 2 \geq n_0$.
+        Folglich gibt es gemäss dem Pumping-Lemma, für das Wort $w$, eine Zerlegung
+        $w = yxz$, wobei
+        \begin{enumerate}[(i)]
+          \item $|yx| \leq n_0$
+          \item $|x| \geq 1$
+          \item entweder $\{y x^k z \mid k \in \mathbb{N}\} \subseteq L$
+            oder $\{y x^k z \mid k \in \mathbb{N}\} \cap L = \emptyset$
+        \end{enumerate}
+        Nach (i) gibt es $y = 0^l$ und $x = 0^m$ für $l,m \in \mathbb{N}$
+        mit $l+m \leq n_0$. Nach (ii) gilt $m \geq 1$. Und weil
+        $w = 0^{n_0}10^{n_0}1 \in L$ ist, muss also
+        $\{y x^k z \mid k \in \mathbb{N}\} \subseteq L$ gelten. Dies ist aber ein
+        Widerspruch, da $yx^0z = yz = 0^{n_0-m}10^{n_0}1 \not\in L$. Somit ist
+        $L \not\in \mathcal{L}_{\mathrm{EA}}$
+      \end{proof}
+
+      \hrule
+
+      \begin{proof}[Beweis mittels der Methode der Kolmogorov-Komplexität] $ $\\
+  Angenommen, $L$ sei regulär. Für jedes $m \in \mathbb{N}$ ist $0^m 1$
+  das erste Wort in der Sprache
+  \begin{align*}
+  L_{0^m 1} = \{y \mid 0^m1y \in L\}
+  \end{align*}
+Nach Satz 3.1 aus dem Buch existiert eine Konstante $c$, unabhängig von $m$, so dass
+  \begin{align*}
+  K(0^m 1) \leq \ceil{\log 2 (1 + 1)} + c = 1 + c
+  \end{align*}
+Da es nur endlich viele Programme der konstanten Länge kleiner gleich $1 + c$ gibt, aber unendlich
+viele Wörter der Form $0^m 1$, ist dies ein Widerspruch. Also ist die Annahme falsch
+und $L$ ist nicht regulär.
+      \end{proof}
+    \end{solutionorbox}
+
+\question
+   Zeige, dass die Sprache $L$ nicht regulär ist
+    \begin{align*}
+      L = \{0^{n^2} \mid n \in \mathbb{N}\}
+    \end{align*}
+     \vspace{-2em}
+    \begin{solutionorbox}[22em]
+      \begin{proof}[Beweis mittels Lemma 3.3] $ $\\
+    Angenommen $L$ sei regulär.
+    Es gibt also einen EA $A = (Q, \{0, 1\}, \hat{\delta}_A, q_0, F)$ mit $L(A) = L$.
+    Beachten wir die Wörter
+    \begin{align*}
+      0, 0000, 0^{3^2}\dots , 0^{(|Q|+1)^2}
+    \end{align*}
+    Es existieren also $i, j \in \{1, 2, \dots, |Q|+1\}$ mit $i < j$
+    und
+    \begin{align*}
+      \hat{\delta}_A(q_0, 0^{i^2}) &= \hat{\delta}_A(q_0, 0^{j^2})
+    \end{align*}
+    (Schubfachprinzip)\\
+    Gemäss Lemma 3.3 im Buch gilt somit
+    \begin{align*}
+      0^{i^2} z \in L &\iff 0^{j^2} z \in L
+    \end{align*}
+    für alle $z \in \{0, 1\}^*$. Für $z = 0^{2i+1}$ haben wir aber einen Widerspruch:
+        $0^{i^2} 0^{2i + 1} = 0^{(i+1)^2} \in L$ und $0^{j^2} 0^{2i + 1} \not\in L$,
+        da $j^2 < j^2 + 2i + 1 < (j+1)^2$.
+        Das heisst also, dass
+    $L$ nicht regulär ist.
+      \end{proof}
+
+      \hrule
+
+      \begin{proof}[Mittels Pumping-Lemma:] $ $\\
+        Angenommen $L$ sei regulär. Betrachten wir nun das Wort
+        \begin{align*}
+          w = 0^{n_0^2}
+        \end{align*}
+        Offensichtlich gilt $|w| = n_0^2  \geq n_0$.
+        Folglich gibt es gemäss dem Pumping-Lemma, für das Wort $w$, eine Zerlegung
+        $w = yxz$, wobei
+        \begin{enumerate}[(i)]
+          \item $|yx| \leq n_0$
+          \item $|x| \geq 1$
+          \item entweder $\{y x^k z \mid k \in \mathbb{N}\} \subseteq L$
+            oder $\{y x^k z \mid k \in \mathbb{N}\} \cap L = \emptyset$
+        \end{enumerate}
+        Nach (i) gibt es $y = 0^l$ und $x = 0^m$ für $l,m \in \mathbb{N}$
+        mit $l+m \leq n_0$. Nach (ii) gilt $m \geq 1$. Und weil
+        $w = 0^{n_0^2} \in L$ ist, muss also
+        $\{y x^k z \mid k \in \mathbb{N}\} \subseteq L$ gelten. Dies ist aber ein
+        Widerspruch, da $yx^2z = 0^{n_0^2+m} \not\in L$, weil $n_0^2 < n_0^2 + m < (n_0+1)^2$.
+        Somit ist
+        $L \not\in \mathcal{L}_{\mathrm{EA}}$
+      \end{proof}
+
+      \hrule
+
+      \begin{proof}[Beweis mittels der Methode der Kolmogorov-Komplexität] $ $\\
+        Angenommen, $L$ sei regulär. Für jedes $m \in \mathbb{N}$ ist $0^{2m}$
+  das erste Wort in der Sprache
+  \begin{align*}
+    L_{0^{m^2+1}} = \{y \mid 0^{m^2+1}y \in L\}
+  \end{align*}
+        da $0^{(m+1)^2} = 0^{m^2+1}0^{2m}$
+Nach Satz 3.1 aus dem Buch existiert eine Konstante $c \in \mathbb{N}$,
+unabhängig von $m$, so dass
+  \begin{align*}
+    K(0^{2m}) \leq \ceil{\log 2 (1 + 1)} + c = 1 + c
+  \end{align*}
+Da es nur endlich viele Programme der konstanten Länge kleiner gleich $1 + c$ gibt, aber unendlich
+viele Wörter der Form $0^{2m}$, ist dies ein Widerspruch. Also ist die Annahme falsch
+und $L$ ist nicht regulär.
+      \end{proof}
+    \end{solutionorbox}
+
+    \question
+    Zeige, dass die Sprache $L$ nicht regulär ist
+    \begin{align*}
+      L = \{w \in \{a, b\}^* \mid |v|_a \leq |v|_b \text{ für alle Präfixe } v
+      \text{ von } w\}
+    \end{align*}
+     \vspace{-2em}
+    \begin{solutionorbox}[22em]
+      \begin{proof}[Beweis mittels Lemma 3.3] $ $\\
+    Angenommen $L$ sei regulär.
+    Es gibt also einen EA $A = (Q, \{a, b\}, \hat{\delta}_A, q_0, F)$ mit $L(A) = L$.
+    Beachten wir die Wörter
+    \begin{align*}
+      b, b^2, \dots , b^{|Q|+1}
+    \end{align*}
+    Es existieren also $i, j \in \{1, 2, \dots, |Q|+1\}$ mit $i < j$
+    und
+    \begin{align*}
+      \hat{\delta}_A(q_0, b^{i}) &= \hat{\delta}_A(q_0, b^{j})
+    \end{align*}
+    (Schubfachprinzip)\\
+    Gemäss Lemma 3.3 im Buch gilt somit
+    \begin{align*}
+      b^{i} z \in L &\iff b^{j} z \in L
+    \end{align*}
+    für alle $z \in \{a, b\}^*$. Für $z = a^{j}$ haben wir aber einen Widerspruch:
+        $b^{i} a^{j} \not \in L$ und $b^{j} a^{j} \in L$,
+        da $i < j$ und jedes Wort auch ein Präfix von sich selbst ist.
+        Das heisst also, dass
+    $L$ nicht regulär ist.
+      \end{proof}
+
+      \hrule
+
+      \begin{proof}[Mittels Pumping-Lemma:] $ $\\
+        Angenommen $L$ sei regulär. Betrachten wir nun das Wort
+        \begin{align*}
+          w = b^{n_0}a^{n_0}
+        \end{align*}
+        Offensichtlich gilt $|w| = 2n_0  \geq n_0$.
+        Folglich gibt es gemäss dem Pumping-Lemma, für das Wort $w$, eine Zerlegung
+        $w = yxz$, wobei
+        \begin{enumerate}[(i)]
+          \item $|yx| \leq n_0$
+          \item $|x| \geq 1$
+          \item entweder $\{y x^k z \mid k \in \mathbb{N}\} \subseteq L$
+            oder $\{y x^k z \mid k \in \mathbb{N}\} \cap L = \emptyset$
+        \end{enumerate}
+        Nach (i) gibt es $y = b^l$ und $x = b^m$ für $l,m \in \mathbb{N}$
+        mit $l+m \leq n_0$. Nach (ii) gilt $m \geq 1$. Und weil
+        $w = b^{n_0}a^{n_0} \in L$ ist, muss also
+        $\{y x^k z \mid k \in \mathbb{N}\} \subseteq L$ gelten. Dies ist aber ein
+        Widerspruch, da $yx^0z = b^{n_0-m}a^{n_0} \not\in L$,
+        weil $n_0 - m < n_0$ und jedes Wort auch ein Präfix von sich selbst ist.
+        Somit ist
+        $L \not\in \mathcal{L}_{\mathrm{EA}}$
+      \end{proof}
+    \end{solutionorbox}
+
+\question
+   Zeige, dass die Sprache $L$ nicht regulär ist
+    \begin{align*}
+      L = \{0^{n!} \mid n \in \mathbb{N}\}
+    \end{align*}
+     \vspace{-2em}
+    \begin{solutionorbox}[22em]
+      \begin{proof}[Beweis mittels Lemma 3.3] $ $\\
+    Angenommen $L$ sei regulär.
+    Es gibt also einen EA $A = (Q, \{0, 1\}, \hat{\delta}_A, q_0, F)$ mit $L(A) = L$.
+    Beachten wir die Wörter
+    \begin{align*}
+      0, 00, 0^{3!}\dots , 0^{(|Q|+1)!}
+    \end{align*}
+    Es existieren also $i, j \in \{1, 2, \dots, |Q|+1\}$ mit $i < j$
+    und
+    \begin{align*}
+      \hat{\delta}_A(q_0, 0^{i!}) &= \hat{\delta}_A(q_0, 0^{j!})
+    \end{align*}
+    (Schubfachprinzip)\\
+    Gemäss Lemma 3.3 im Buch gilt somit
+    \begin{align*}
+      0^{i!} z \in L &\iff 0^{j!} z \in L
+    \end{align*}
+    für alle $z \in \{0, 1\}^*$. Für $z = 0^{i\cdot i!}$ haben wir aber einen Widerspruch:
+    $0^{i!} 0^{i\cdot i!} = 0^{(i+1)!} \in L$ und $0^{j!} 0^{i\cdot i!} \not\in L$,
+    da $j! < j! + i\cdot i! < j! + j\cdot j! = (j+1)!$.
+    Das heisst also, dass
+    $L$ nicht regulär ist.
+      \end{proof}
+
+      \hrule
+
+      \begin{proof}[Mittels Pumping-Lemma:] $ $\\
+        Angenommen $L$ sei regulär. Betrachten wir nun das Wort
+        \begin{align*}
+          w = 0^{n_0!}
+        \end{align*}
+        Offensichtlich gilt $|w| = n_0! \geq n_0$.
+        Folglich gibt es gemäss dem Pumping-Lemma, für das Wort $w$, eine Zerlegung
+        $w = yxz$, wobei
+        \begin{enumerate}[(i)]
+          \item $|yx| \leq n_0$
+          \item $|x| \geq 1$
+          \item entweder $\{y x^k z \mid k \in \mathbb{N}\} \subseteq L$
+            oder $\{y x^k z \mid k \in \mathbb{N}\} \cap L = \emptyset$
+        \end{enumerate}
+        Nach (i) gibt es $y = 0^l$ und $x = 0^m$ für $l,m \in \mathbb{N}$
+        mit $l+m \leq n_0$. Nach (ii) gilt $m \geq 1$. Und weil
+        $w = 0^{n_0!} \in L$ ist, muss also
+        $\{y x^k z \mid k \in \mathbb{N}\} \subseteq L$ gelten. Dies ist aber ein
+        Widerspruch, da $yx^2z = 0^{n_0!+m} \not\in L$, weil
+        $n_0! < n_0! + m \leq n_0! + n_0 < (n_0+1)!$.
+        Somit ist
+        $L \not\in \mathcal{L}_{\mathrm{EA}}$
+      \end{proof}
+
+      \hrule
+
+      \begin{proof}[Beweis mittels der Methode der Kolmogorov-Komplexität] $ $\\
+        Angenommen, $L$ sei regulär. Für jedes $m \in \mathbb{N}$ ist $0^{m\cdot m! - 1}$
+  das erste Wort in der Sprache
+  \begin{align*}
+    L_{0^{m! + 1}} = \{y \mid 0^{m!+1}y \in L\}
+  \end{align*}
+        da $(m+1)! = m\cdot m! + m! = m! + 1 + m\cdot m! -1$.
+Nach Satz 3.1 aus dem Buch existiert eine Konstante $c \in \mathbb{N}$,
+unabhängig von $m$, so dass
+  \begin{align*}
+    K(0^{0^{m\cdot m! - 1}}) \leq \ceil{\log 2 (1 + 1)} + c = 1 + c
+  \end{align*}
+Da es nur endlich viele Programme der konstanten Länge kleiner gleich $1 + c$ gibt,
+aber unendlich viele Wörter der Form $0^{m\cdot m! - 1}$, ist dies ein Widerspruch.
+Also ist die Annahme falsch
+und $L$ ist nicht regulär.
+      \end{proof}
+    \end{solutionorbox}
+\question
+   Verwende das Pumping Lemma um zu zeigen, dass die Sprache $L$ nicht regulär ist
+    \begin{align*}
+      L = \{0^{p} \mid p \text{ ist eine Primzahl}\}
+    \end{align*}
+     \vspace{-2em}
+    \begin{solutionorbox}[20em]
+      \begin{proof}[Mittels Pumping-Lemma:] $ $\\
+        Angenommen $L$ sei regulär. Betrachten wir nun das Wort
+        \begin{align*}
+          w = 0^{p}
+        \end{align*}
+        für eine Primzahl $p \geq n_0$,
+        somit gilt $|w| = p \geq n_0$.
+        Folglich gibt es gemäss dem Pumping-Lemma, für das Wort $w$, eine Zerlegung
+        $w = yxz$, wobei
+        \begin{enumerate}[(i)]
+          \item $|yx| \leq n_0$
+          \item $|x| \geq 1$
+          \item entweder $\{y x^k z \mid k \in \mathbb{N}\} \subseteq L$
+            oder $\{y x^k z \mid k \in \mathbb{N}\} \cap L = \emptyset$
+        \end{enumerate}
+        Nach (i) gibt es $y = 0^l$ und $x = 0^m$ für $l,m \in \mathbb{N}$
+        mit $l+m \leq n_0$. Nach (ii) gilt $m \geq 1$. Und weil
+        $w = 0^{p} \in L$ ist, muss also
+        $\{y x^k z \mid k \in \mathbb{N}\} = \{0^{p + (k-1)m} \mid k \in \mathbb{N}\} \subseteq L$ gelten. Dies ist aber ein
+        Widerspruch, denn falls wir $k=p+1$ wählen, ist
+        $yx^kz = 0^{p+p\cdot m} = 0^{p\cdot (m+1)} \not\in L$, da
+        $p(m+1)$ offensichtlich keine Primzahl ist!
+        Somit ist
+        $L \not\in \mathcal{L}_{\mathrm{EA}}$
+      \end{proof}
+    \end{solutionorbox}
+\end{questions}
+
+\end{document}

@@ -1,0 +1,136 @@
+\documentclass[a4paper,ngerman,12pt]{exam}
+\usepackage{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{geometry}
+\usepackage{csquotes} % Anführungszeichen
+\usepackage{paralist} % kompakte Aufzählungen
+\usepackage{textcomp,tikz} %diverses
+\usepackage{amsmath,amssymb,amstext,amsthm}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{mdframed} % Boxen
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows, automata}
+
+\geometry{a4paper, top=3cm, left=2.7cm, right=2.7cm}
+\pagestyle{plain}
+\renewcommand{\solutiontitle}{\noindent\textbf{Lösung:}\enspace}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\renewcommand\L{\mathcal{L}}
+
+%\printanswers
+
+\begin{document}
+\noindent Theoretische Informatik \hfill Gruppe 8 \\
+\mbox{}\hfill Loris Reiff
+\begin{center}
+  \bfseries\Large
+  Quiz 7\ifprintanswers
+  -- Lösungen
+\fi
+\end{center}
+
+\begin{questions}
+  \question
+  Sei $\Sigma$ ein Alphabet und $L \subseteq \Sigma^*$, dann
+  \begin{checkboxes}
+    \CorrectChoice $L \in \L_{\mathrm{RE}} \wedge
+      L^\texttt{C} \in \L_{\mathrm{RE}} \implies L \in \L_{\mathrm{R}}$
+    \CorrectChoice $L \in \L_{\mathrm{RE}} \wedge
+      L^\texttt{C} \in \L_{\mathrm{RE}} \impliedby L \in \L_{\mathrm{R}}$
+    \CorrectChoice $L \in \L_{\mathrm{RE}} \wedge
+      L^\texttt{C} \in \L_{\mathrm{RE}} \iff L \in \L_{\mathrm{R}}$
+    \choice Keine der Aussagen ist korrekt
+  \end{checkboxes}
+\begin{solution}
+Informal justification for
+    $L \in \L_{RE} \wedge L^C \in \L_{RE} \Rightarrow L \in \L_R$:
+
+    If $L \in \L_{RE} \wedge L^C \in \L_{RE}$ we know that there
+    exists a TM $M$ such that $L = L(M)$ and a TM $M'$ with $L^C = L(M')$.
+    We can therefore create a TM $\overline{M}$ that alternately executes a state
+    in $M$ and $M'$ for an input $x$.
+    We note that $q_{accept}$ and $q_{reject}$ of $M$ become
+    $q_{accept}$ and $q_{reject}$ of $\overline{M}$.
+    And $q_{accept}$ of $M'$ becomes $q_{reject}$ of $\overline{M}$.
+    $q_{reject}$ of $M'$ becomes $q_{accept}$ of $\overline{M}$.
+
+    If $x$ is in $L$, then $\overline{M}$ is guaranteed to terminate in
+    $q_{accept}$ because of $M$. If $x$ is not in $L$, $\overline{M}$ is
+    definitely going to halt in $q_{reject}$ because of $M'$.
+
+    $\Leftarrow$ follows from Lemme 5.4 and $\L_{\mathrm{R}} \subsetneq \L_{\mathrm{RE}}$
+\end{solution}
+
+\question Sei
+    $L = \{\text{Kod}(M) \mid M \text{ ist eine TM die Primzahlen akzeptiert}\}$
+  dann gilt
+
+  \begin{checkboxes}
+    \choice $L \in \L_\mathrm{R}$
+    \CorrectChoice $L \not\in \L_\mathrm{R}$
+  \end{checkboxes}
+
+  Begründe:
+\begin{solutionorbox}[10em]
+  $L$ ist die Sprache der Turingmaschinen, welche $L_P = \{p \mid p \text{ ist Prim}\}$
+  akzeptiert. Es gilt $L \neq \emptyset$, ausserdem $L_P$ ist offensichtlich rekursiv.
+  Somit ist $L$ ein semantisch nichttriviales Entscheidungsproblem über Turingmaschinen und
+  gemäss Satz von Rice $L \not\in \L_\mathrm{R}$
+\end{solutionorbox}
+
+\question Sei
+    $L = \{\text{Kod}(M) \mid M \text{ hält nie}\}$
+    \begin{parts}
+      \part Bestimme $L^\texttt{C}$
+      \uplevel{\begin{solutionorbox}[4em] $ $ \\
+    \vspace*{-2em}
+  \begin{align*}
+    L^\texttt{C} = &\{w \in \left(\Sigma_{\text{bool}}\right)^* \mid w \neq
+  \mbox{Kod}(M) \text{ für alle TM }M\} \\
+    &\cup \{\mbox{Kod}(M) \mid \exists x \text{ so dass TM } M \text{ auf } x \text{ hält}\}
+  \end{align*}
+\end{solutionorbox}}
+      \part Zeige $L^\texttt{C} \in \L_{\text{RE}}$
+    \uplevel{\begin{solutionorbox}[14em]
+      Wir beschreiben eine NTM $M$, so dass $L(M) = L$.
+      Für jedes Wort $w\in L^\texttt{C}$ gibt es eine endliche akzeptierende Berechnung.
+      \begin{enumerate}
+        \item Prüfe ob $w = $ Kod($M'$) für eine TM $M'$, falls nicht akzeptiert $M$ das Wort.
+        \item Falls $w = $ Kod($M'$) für eine TM $M'$, dann wählt $M$ nichtdeterministisch
+          ein Wort $x$ über dem Eingabealphabet von $M'$ und simuliert $M'$ deterministisch
+          auf $x$. Falls $M'$ auf $x$ hält, akzeptiert $M$ das Wort. Sonst rechnet
+          $M$ unendlich lange.
+      \end{enumerate}
+      Korrektheitsbegründung (schwammig):
+      $M$ akzeptiert offensichtlich alle Wörter, welche keine
+      TM sind. Falls $w$ eine Kodierung einer TM $M'$ ist, so ist $w \in L^C$ gdw.
+      es ein Wort gibt so dass diese TM $M'$ hält. Es gibt eine akzeptierende
+      Berechnung von $M$ wo dieses Wort nichtdeterministisch gewählt wird.
+      Oder $w \in L$, dann gibt es keine akzeptierende Berechung von $M$.
+      Somit $L^C \in \L_{\mathrm{RE}}$
+    \end{solutionorbox}}
+    \end{parts}
+
+  \question Welche Aussagen sind korrekt?
+  ($M$ ist eine MTM, $n\in \mathbb{N}$, $C$ ist eine Konfiguration)
+  \begin{checkboxes}
+    \CorrectChoice min\{Time$_M(x) \mid x \in \Sigma^n$\}
+      + max\{Time$_M(x) \mid x \in \Sigma^n\} \leq 2\cdot$Time$_M(n)$
+    \choice Space$_M(n)$ hängt von der Mächtigkeit des
+    Arbeitsalphabetes von $M$ ab.
+    \choice Space$_M(n)$ hängt von der Mächtigkeit des
+    Eingabealphabetes von $M$ ab.
+    \CorrectChoice Space$_M(C)$ hängt nicht
+    von der Länge des Eingabewortes ab.
+  \end{checkboxes}
+
+\end{questions}
+
+\end{document}

@@ -1,0 +1,96 @@
+\documentclass[a4paper,ngerman,12pt]{exam}
+\usepackage{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{geometry}
+\usepackage{csquotes} % Anführungszeichen
+\usepackage{paralist} % kompakte Aufzählungen
+\usepackage{textcomp,tikz} %diverses
+\usepackage{amsmath,amssymb,amstext,amsthm}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{mdframed} % Boxen
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows, automata}
+
+\geometry{a4paper, top=3cm, left=2.7cm, right=2.7cm}
+\pagestyle{plain}
+\renewcommand{\solutiontitle}{\noindent\textbf{Lösung:}\enspace}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+%\printanswers
+
+\begin{document}
+\noindent Theoretische Informatik \hfill Gruppe 8 \\
+\mbox{}\hfill Loris Reiff
+\begin{center}
+  \bfseries\Large
+  Quiz 5\ifprintanswers
+  -- Lösungen
+\fi
+\end{center}
+
+\begin{questions}
+  \question
+  Welche Aussage ist korrekt?
+  \begin{checkboxes}
+    \CorrectChoice $\mathcal{L}_{\mathrm{EA}} \subsetneq
+          \mathcal{L}_{\mathrm{R}}$
+    \choice $\mathcal{L}_{\mathrm{EA}} =
+          \mathcal{L}_{\mathrm{R}}$
+    \choice $\mathcal{L}_{\mathrm{EA}}\supsetneq
+          \mathcal{L}_{\mathrm{R}}$
+  \end{checkboxes}
+
+  \question
+  Welche Aussagen sind korrekt ($M_1, M_2$ sind TM)?
+  \begin{checkboxes}
+    \choice $L(M_1) = L(M_2) \implies M_1 = M_2$
+    \choice $L(M_1) = L(M_2) \iff M_1 = M_2$
+    \CorrectChoice $L(M_1) = L(M_2) \impliedby M_1 = M_2$
+  \end{checkboxes}
+
+\question \textit{(Wiederholung Kapitel 2)} \\
+  Sei $w = 1^{2^{3\cdot n^2}} \in \{0,1\}^*$ für alle $n \in \mathbb{N}$.
+Geben Sie eine möglichst gute obere
+Schranke für die Kolmogorov-Komplexität von $w_n$ an, gemessen in der Länge von
+$w_n$.
+
+\begin{solutionorbox}[29em]
+  Wir geben zunächst für jedes $n\in \mathbb{N}$ ein Programm an, welches
+  $w_n$ erzeugt
+\begin{lstlisting}[language=Pascal, mathescape=true]
+begin
+  x := $n$;
+  x := 2^(3 * x*x);
+  for i:=1 to x do
+    write(1);
+end;
+\end{lstlisting}
+Der einzige Teil des Maschinencodes dieses Programms, der von $w_n$ abhängt, ist
+die Darstellung von $n$ in der zweiten Zeile.
+Der restliche Programmcode hat eine konstante Länge.
+Also ist die binäre Länge dieses Programms $\ceil{\log_2 (n + 1)} + c$ für
+eine Konstante c.
+
+Damit lässt sich die Kolmogorov-Komplexität von $w_n$ von oben abschätzen durch
+  \begin{align*}
+    K(w_n) \leq \ceil{\log_2 (n + 1)} + c
+  \end{align*}
+  Die Länge von $w_n$ ist: $|w_n| = 2^{3 \cdot n^2} \iff \sqrt{\log_2 |w_n|/3} = n$,
+  somit
+  \begin{align*}
+    K(w_n) &\leq \frac{1}{2}\log_2 (\log_2 |w_n|/3 ) + c' \\
+      &\leq \frac{1}{2}\log_2 \log_2 |w_n| + c''
+  \end{align*}
+  für Konstanten $c', c''$.
+    \end{solutionorbox}
+
+\end{questions}
+
+\end{document}

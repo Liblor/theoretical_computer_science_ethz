@@ -1,0 +1,232 @@
+\documentclass[a4paper,ngerman,12pt]{exam}
+\usepackage{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{paralist} % kompakte Aufzählungen
+\usepackage{textcomp,tikz} %diverses
+\usepackage{amsmath,amssymb,amstext,amsthm}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{float}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows, automata}
+\usepackage{geometry}
+
+\geometry{a4paper, top=3cm, left=2.7cm, right=2.7cm}
+\pagestyle{plain}
+\renewcommand{\solutiontitle}{\noindent\textbf{Lösung:}\enspace}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\newcommand\kod{\text{Kod}}
+\newcommand\Lu{L_{\mathrm{U}}}
+\newcommand\Lh{L_{\mathrm{H}}}
+\renewcommand\L{\mathcal{L}}
+\newcommand\LR{\mathcal{L}_{\mathrm{R}}}
+\newcommand\LDiag{L_{\mathrm{Diag}}}
+
+
+%\printanswers
+
+\begin{document}
+%$ $\\
+\noindent Theoretische Informatik \hfill Gruppe 8
+
+\hfill Loris Reiff
+
+\begin{center}
+  \bfseries\Large
+  Methode der Reduktion \ifprintanswers
+  -- Lösungen
+  \else
+  -- Aufgaben
+\fi
+\end{center}
+
+\noindent\textit{Alle 4 Aufgaben lassen sich mit der EE-Reduktion lösen und ich habe nur diese Angegeben [Aufgabe 1 und 4] (Ich werde in der nächsten Lektion noch etwas dazu erwähnen).}
+
+\begin{questions}
+\question
+Zeige dass folgende Sprache
+\begin{align*}
+  L = \{\kod(M)\#x\#0^i \mid &x \in \{0,1\}^*, i \in \mathbb{N}, M
+  \text{ hat mindestens } i+1 \text{ Zustände} \\
+  &\text{und während der Berechnung von } M
+  \text{ auf } x \text{ wird der } \\
+  &i \text{-te Zustand von $M$ min. einmal erreicht}
+\end{align*}
+keine rekursive Sprache ist.
+
+  \textit{(Aufgabe 5.16 aus dem Buch)}
+    \begin{solutionorbox}[18em]
+      \begin{proof} $ $\\
+      Wir haben in der Vorlesung gesehen, dass $\Lu \not\in \LR$ gilt. Wir zeigen also
+      $\Lu \leq_{\mathrm{EE}} L$, was $L \not\in \LR$ impliziert.
+
+      Folgende TM $A$ transformiert eine Eingabe $w$ für $\Lu$ in eine Eingabe für $L$:
+      \begin{itemize}
+      \item Prüfe, ob $w = \kod(M)\#x$ für eine TM $M$ und ein Wort $x$
+      \begin{itemize}
+        \item Falls nein, gib $\lambda$ aus.
+        \item Falls ja, bestimme $i$, so dass $q_i = q_{\text{accept}}$
+        und gib $\kod(M)\#x\#0^i$ aus
+      \end{itemize}
+      \end{itemize}
+      Wir zeigen nun, dass $w \in \Lu \iff A(w) \in L$ gilt:
+
+        Sei $w \in \Lu$:
+        \begin{align*}
+          w \in \Lu &\implies w=\kod(M)\#x \in \Lu \\
+          & \implies w \in L(M) \\
+          & \implies A(w) = \kod(M)\#x\#0^i \in L
+        \end{align*}
+        Wobei im letzten Schritt verwendet wurde, dass $M$ die Berechnung
+        in $q_{\mathrm{accept}}$
+        beendet, d.h. der $i$-te Zustand wurde min. einmal erreicht. Ausserdem
+        hat $M$, genau $i+1$ Zustände, da $q_{\mathrm{accept}}$ der zweit letzte Zustand
+        ist (Definition der TM-Kodierung).
+
+        Sei $w \not\in \Lu$: \\
+        Fall 1: $w$ hat nicht die Form $\kod(M)\#x$, also gilt $A(w) = \lambda \not\in L$. \\
+        Fall 2: $w$ hat die Form $\kod(M)\#x$, also gilt
+        \begin{align*}
+        x \not\in L(M) \implies A(w) = \kod(M)\#x\#0^i \not\in L
+        \end{align*}
+        da der $i$-te Zustand, welcher $q_{\mathrm{accept}}$
+        entspricht, nie erreicht wird.
+
+        Somit schliessen wir $L \not \in \LR$.
+      \end{proof}
+  \end{solutionorbox}
+
+\ifprintanswers
+\newpage
+\fi
+
+\question
+   Zeige
+      $\Lu^C \leq_{\mathrm{EE}} \LDiag$
+    \begin{solutionorbox}[18em]
+      \begin{proof} $ $ \\
+      Folgende TM $B$ transformiert eine Eingabe $x$ für $\Lu^C$ in eine Eingabe für $\LDiag$:
+      \begin{itemize}
+      \item Prüfe, ob $x = \kod(M)\#w$ für eine TM $M$ und ein Wort $w$
+      \begin{itemize}
+        \item Falls nein, konstruiere die TM $M_{\emptyset}$, welche alle Eingaben verwirft.
+        \item Falls ja, konstruiere die TM $\widehat{M}$, welche $M$ auf $w$ simuliert und
+          die Eingabe ignoriert.
+      \end{itemize}
+      \item Berechne $i$, so dass $M_i$ die konstruierte TM ist und gib $w_i$ zurück.
+      \end{itemize}
+      Wir zeigen nun, dass $x \in \Lu^C \iff B(x) \in \LDiag$ gilt:
+
+        Sei $x \in \Lu^C$, dann haben wir zwei Fälle \\
+        Fall 1: $x$ hat nicht die Form $\kod(M)\#w$, somit gilt $B(x) \in \LDiag$,
+        da $M_i = M_{\emptyset}$
+        \hspace*{2.8em} kein Wort akzeptiert, insbesondere nicht $w_i$. \\
+        Fall 2: $x$ hat die Form $\kod(M)\#w$:
+        \begin{align*}
+          x  \in \Lu^C &\implies w\not\in L(M) \\
+          &\implies \widehat{M} \text{ verwirft alle Eingaben } \\
+          &\implies w_i \not\in \widehat{M} = M_i \\
+          &\implies B(x) = w_i \in \LDiag
+        \end{align*}
+
+        Sei $x \not\in \Lu^C$, dann gilt:
+        \begin{align*}
+          x = \kod(M)\#w \not\in \Lu^C &\implies w\in L(M) \\
+          &\implies \widehat{M} \text{ akzeptiert alle Eingaben } \\
+          &\implies w_i \in \widehat{M} = M_i \\
+          &\implies B(x) = w_i \not\in \LDiag
+        \end{align*}
+      \end{proof}
+    \end{solutionorbox}
+
+\ifprintanswers
+\newpage
+\fi
+
+  \question
+   Zeige $\Lh^C \leq_{\mathrm{EE}} \Lu^C$
+    \begin{solutionorbox}[22em]
+      \begin{proof} $ $ \\
+      Folgende TM $C$ transformiert eine Eingabe $x$ für $\Lh^C$ in eine Eingabe für $\Lu^C$:
+      \begin{itemize}
+        \item Prüfe, ob $x = \kod(M)\#w$ für eine TM $M$ und ein Wort $w$
+      \begin{itemize}
+        \item Falls nein, gib $\lambda$ zurück
+        \item Falls ja, modifiziere die TM $M$ zu $\widehat{M}$, in dem
+          alle Transitionen von $q_{\mathrm{reject}}$ nach $q_{\mathrm{accept}}$
+          umgeleitet werden und gib $\kod(\widehat{M})\#w$ zurück
+      \end{itemize}
+      \end{itemize}
+      Wir zeigen nun, dass $x \in \Lh^C \iff C(x) \in \Lu^C$ gilt:
+
+        Sei $x \in \Lh^C$: \\
+        Fall 1: $x$ hat nicht die Form $\kod(M)\#w$, somit gilt $C(x)=\lambda \in \Lu^C$ \\
+        Fall 2:
+        \begin{align*}
+          x = \kod(M)\#w \in \Lh^C &\implies M \text{ hält nicht auf }w \\
+          &\implies \widehat{M} \text{ hält nicht auf } w \\
+          &\implies w \not\in L(\widehat{M}) \\
+          &\implies C(x) = \kod(\widehat{M})\#w \in \Lu^C
+        \end{align*}
+
+        Sei $x \not\in \Lh^C$, dann gilt:
+        \begin{align*}
+          x = \kod(M)\#w \not\in \Lh^C &\implies M \text{ hält auf } w \\
+          &\implies \widehat{M} \text{ akzeptiert } w \\
+          &\implies C(x) = \kod(\widehat{M})\#w \not\in \Lu^C
+        \end{align*}
+      \end{proof}
+    \end{solutionorbox}
+
+\ifprintanswers
+\newpage
+\fi
+
+    \question
+    Zeige, dass $L_4 \not\in \LR$ ohne den Satz von Rice zu verwenden.
+    \begin{align*}
+      L_4 &= \{\kod(M) \mid \text{M akzeptiert } 100\}
+    \end{align*}
+    \vspace*{-1em}
+    \begin{solutionorbox}[22em]
+      \begin{proof} $ $ \\
+      Wir haben in der Vorlesung gesehen, dass $\Lu \not\in \LR$ gilt. Wir zeigen also
+      $\Lu \leq_{\mathrm{EE}} L_4$, was $L_4 \not\in \LR$ impliziert.
+
+      Folgende TM $D$ transformiert eine Eingabe $x$ für $\Lu$ in eine Eingabe für $L_4$:
+      \begin{itemize}
+        \item Prüfe, ob $x = \kod(M)\#w$ für eine TM $M$ und ein Wort $w$
+      \begin{itemize}
+        \item Falls nein, gib $\lambda$ zurück
+        \item Falls ja, konstruiere die TM $\widehat{M}$, welche $M$ auf $w$ simuliert und
+          die Eingabe ignoriert; gib $\kod(\widehat{M})$ zurück.
+      \end{itemize}
+      \end{itemize}
+      Wir zeigen nun, dass $x \in \Lu \iff D(x) \in L_4$ gilt:
+
+        Sei $x \in \Lu$, dann gilt:
+        \begin{align*}
+          x = \kod(M)\#w \in \Lu &\implies w \in L(M) \\
+          &\implies \widehat{M} \text{ akzeptiert alles } \\
+          &\implies \widehat{M} \text{ akzeptiert } 100 \\
+          &\implies D(x) = \kod(\widehat{M}) \in L_4
+        \end{align*}
+
+        Sei $x \not\in \Lh^C$, dann haben wir zwei Fälle: \\
+        Fall 1: $x$ hat nicht die Form $\kod(M)\#w$, somit gilt $D(x)=\lambda \not\in L_4$ \\
+        Fall 2:
+        \begin{align*}
+          x = \kod(M)\#w \not\in \Lu &\implies w \not\in L(M) \\
+          &\implies \widehat{M} \text{ akzeptiert keine Eingabe} \\
+          &\implies 100 \not \in L(\widehat{M}) \\
+          &\implies D(x) = \kod(\widehat{M}) \not\in L_4
+        \end{align*}
+      \end{proof}
+    \end{solutionorbox}
+\end{questions}
+
+\end{document}

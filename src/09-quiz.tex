@@ -1,0 +1,120 @@
+\documentclass[a4paper,ngerman,12pt]{exam}
+\usepackage{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{csquotes} % Anführungszeichen
+\usepackage{paralist} % kompakte Aufzählungen
+\usepackage{textcomp,tikz} %diverses
+\usepackage{amsmath,amssymb,amstext,amsthm}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{mdframed} % Boxen
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows, automata}
+
+\geometry{a4paper, top=3cm, left=2.7cm, right=2.7cm}
+\pagestyle{plain}
+\renewcommand{\solutiontitle}{\noindent\textbf{Lösung:}\enspace}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\renewcommand\L{\mathcal{L}}
+\newcommand\ST{\Sigma_{\mathrm{T}}}
+\newcommand\SN{\Sigma_{\mathrm{N}}}
+
+%\printanswers
+
+\begin{document}
+\noindent Theoretische Informatik \hfill Gruppe 8 \\
+\mbox{}\hfill Loris Reiff
+\begin{center}
+  \bfseries\Large
+  Quiz 9 \ifprintanswers
+  -- Lösungen
+\fi
+\end{center}
+
+\begin{questions}
+\question Vereinfache folgende reguläre Ausdrücke:
+  \begin{parts}
+    \part $\lambda + a(\lambda + a + ba)^* b$
+  \uplevel{\begin{solutionorbox}[2.5em]
+    $\lambda + a(a + ba)^* b$
+  \end{solutionorbox}}
+    \part $aba + aba(\lambda + ba + baa)^*(\lambda + ba + baa)$
+  \uplevel{\begin{solutionorbox}[2.5em]
+    $aba(ba + baa)^*$
+  \end{solutionorbox}}
+    \part Welche Wörter gehören zu welcher Sprache?
+    \begin{align*}
+      L_a &= L(\lambda + a(\lambda + a + ba)^* b) \\
+      L_b &= L(aba + aba(\lambda + ba + baa)^*(\lambda + ba + baa))
+    \end{align*}
+    \begin{itemize}
+      \item $\lambda$
+      \item $ab$
+      \item $abab$
+      \item $ababa$
+      \item $abababaa$
+    \end{itemize}
+   \begin{solution} \\
+    $\lambda \in L_a$, \hspace{2.9em}
+      $ab \in L_a$, \\
+      $abab \in L_a$,\hspace{2em}
+      $ababa \in L_b$ \\
+      $abababaa \in L_b$
+  \end{solution}
+  \end{parts}
+
+\question Entwerfe eine Grammatik für die folgende Sprache
+  \begin{align*}
+    L = \{w \in \{0,1\}^* \mid |w|_1 \geq 2\}
+  \end{align*}
+  und gib eine Ableitung des Wortes $00101$ an.
+\begin{solutionorbox}[8em]
+  $G = (\SN, \ST, P, S)$ mit
+  \begin{enumerate}[(i)]
+    \item $\SN = \{S, X, Y\}$,
+    \item $\ST = \{0,1\}$,
+    \item $P = \{S \to 0S \mid 1X,$ \\
+      \hspace*{2.4em}$X \to 0X \mid 1Y,$ \\
+      \hspace*{2.4em}$Y \to 0Y \mid 1Y \mid \lambda\}$
+  \end{enumerate}
+
+  $S \implies 0S \implies 00S \implies 001X \implies 0010X \implies 00101Y
+  \implies 00101$
+\end{solutionorbox}
+
+\question Sei
+  $G = (\{S,X\}, \{0,1\}, P, S)$ mit
+  \begin{align*}
+    P = \{S \to 1X1, X \to \lambda, X \to XS, X \to X0, X \to 1, X \to XX, X0 \to 0X\}
+  \end{align*}
+  \begin{parts}
+    \part
+Bestimme die generierte Sprache.
+    \uplevel{\begin{solutionorbox}[5em]
+      $\{1w1 \mid w \in \{0,1\}^*\}$
+    \end{solutionorbox}}
+    \part Bestimme eine reguläre (Typ-3) Grammatik, welche äquivalent ist.
+    Also die gleiche Sprache generiert.
+    \uplevel{\begin{solutionorbox}[18em]
+  $G = (\SN, \ST, P, S)$ mit
+  \begin{enumerate}[(i)]
+    \item $\SN = \{S, X\}$,
+    \item $\ST = \{0,1\}$,
+    \item
+        $P = \{S \to 1X,$ \\
+        \hspace*{2.1em} $X \to 0X \mid 1X \mid 1 \}$
+  \end{enumerate}
+    \end{solutionorbox}}
+  \end{parts}
+
+
+\end{questions}
+
+\end{document}

@@ -1,0 +1,82 @@
+\documentclass[a4paper,ngerman,12pt]{exam}
+\usepackage{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{csquotes} % Anführungszeichen
+\usepackage{paralist} % kompakte Aufzählungen
+\usepackage{textcomp,tikz} %diverses
+\usepackage{amsmath,amssymb,amstext,amsthm}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{mdframed} % Boxen
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows, automata}
+
+\geometry{a4paper, top=3cm, left=2.7cm, right=2.7cm}
+\pagestyle{plain}
+\renewcommand{\solutiontitle}{\noindent\textbf{Lösung:}\enspace}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\renewcommand\L{\mathcal{L}}
+\newcommand\ST{\Sigma_{\mathrm{T}}}
+\newcommand\SN{\Sigma_{\mathrm{N}}}
+
+%\printanswers
+
+\begin{document}
+\noindent Theoretische Informatik \hfill Gruppe 8
+\begin{center}
+  \bfseries\Large
+  Quiz 12 \ifprintanswers
+  -- Lösungen
+\fi
+\end{center}
+
+
+\begin{questions}
+\question
+  Zeige, dass $L = \{ww \mid w \in \{0,1\}^*\}$ keine kontextfreie Sprache ist.
+  \begin{solutionorbox}[18em] $ $ \\
+    \textit{Proof-Sketch} \\
+    Nehmen wir an $L$ sei kontextfrei, d.h. Pumping-Lemma gilt für $L$.
+    Betrachten wir das Wort
+    \begin{align*}
+      z = 0^{n_L}1^{n_L}0^{n_L}1^{n_L}
+    \end{align*}
+    Offensichtlich gilt $|z| = 4n_L > n_L$. Es gibt also eine Zerlegung
+    $z = uvwxy$ mit den 3 Eigenschaften. Mit (ii) $uwx \leq n_L$ können
+    wir folgern, dass $u$ und $v$ nur zwei unterschiedliche Buchstaben
+    aus dem ersten und dem \textit{repertierten Wort} haben kann.
+    Mit (i) $|vx| \geq 1$ erhalten wir einen Widerspruch in (iii), denn
+    $uv^2wx^2y$ ist nicht in $L$.
+  \end{solutionorbox}
+
+  \question
+  Entwerfe den nichtdeterministischen Kellerautomaten für
+  \begin{align*}
+    L = \{ww^{\mathrm{R}} \mid w \in \{a,b\}^*\}
+  \end{align*}
+  \begin{solutionorbox}[20em] $ $ \\
+    $M = (\{q_0,q_1\}, \{a,b\},\{a,b,Z_0\}, \delta, q_0, Z_0)$ mit
+    der
+    \begin{align*}
+      \delta(q_0, a, Z_0) &= \{(q_0, Z_0a),(q_1, Z_0a)\} \\
+      \delta(q_0, b, Z_0) &= \{(q_0, Z_0b),(q_1, Z_0b)\} \\
+      \delta(q_0, a, a) &= \{(q_0, aa),(q_1, aa)\} \\
+      \delta(q_0, a, b) &= \{(q_0, ab),(q_1, ab)\} \\
+      \delta(q_0, b, a) &= \{(q_0, ba),(q_1, ba)\} \\
+      \delta(q_0, b, b) &= \{(q_0, bb),(q_1, bb)\} \\
+      \delta(q_0, \lambda, Z_0) &= \{(q_1, \lambda)\} \\
+      \delta(q_1, a, a) &= \{q_1, \lambda\} \\
+      \delta(q_1, b, b) &= \{q_1, \lambda\} \\
+      \delta(q_1, \lambda, Z_0) &= \{(q_1, \lambda)\}
+    \end{align*}
+  \end{solutionorbox}
+\end{questions}
+
+\end{document}

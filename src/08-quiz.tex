@@ -1,0 +1,91 @@
+\documentclass[a4paper,ngerman,12pt]{exam}
+\usepackage{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{csquotes} % Anführungszeichen
+\usepackage{paralist} % kompakte Aufzählungen
+\usepackage{textcomp,tikz} %diverses
+\usepackage{amsmath,amssymb,amstext,amsthm}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{mdframed} % Boxen
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows, automata}
+
+\geometry{a4paper, top=3cm, left=2.7cm, right=2.7cm}
+\pagestyle{plain}
+\renewcommand{\solutiontitle}{\noindent\textbf{Lösung:}\enspace}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\renewcommand\L{\mathcal{L}}
+\newcommand\ST{\Sigma_{\mathrm{T}}}
+\newcommand\SN{\Sigma_{\mathrm{N}}}
+
+%\printanswers
+
+\begin{document}
+\noindent Theoretische Informatik \hfill Gruppe 8 \\
+\mbox{}\hfill Loris Reiff
+\begin{center}
+  \bfseries\Large
+  Quiz 8 \ifprintanswers
+  -- Lösungen
+\fi
+\end{center}
+
+\begin{questions}
+  \question
+  Das Konzept der Grammatiken ist genau so stark wie das Konzept der Turingmaschinen
+  \begin{checkboxes}
+    \CorrectChoice Wahr
+    \choice Falsch
+  \end{checkboxes}
+
+\question Entwerfe eine Grammatik für die Sprache der Palindrome, i.e. für
+  \begin{align*}
+    L = \{w \in \{a,b\}^* \mid w = w^{\text{R}}\}
+  \end{align*}
+  \vspace*{-2em}
+\begin{solutionorbox}[8em]
+  $G = (\SN, \ST, P, S)$ mit
+  \begin{enumerate}[(i)]
+    \item $\SN = \{S\}$,
+    \item $\ST = \{a,b\}$,
+    \item $P = \{S \to \lambda, S \to a, S \to b, S \to aSa, S \to bSb\}$
+  \end{enumerate}
+\end{solutionorbox}
+
+\question Sei
+  $G = (\{S,X\}, \{0,1\}, P, S)$ mit
+  \begin{align*}
+    P = \{S \to X00X, S \to X11X, X \to X1, X \to X0, X \to \lambda\}
+  \end{align*}
+  \begin{parts}
+    \part
+Bestimme die generierte Sprache.
+    \uplevel{\begin{solutionorbox}[5em]
+  $\{x \in \{0,1\}^* \mid x \text{ enthält 00 oder 11 als Teilwörter}\}$
+    \end{solutionorbox}}
+    \part Bestimme eine reguläre (Typ-3) Grammatik, welche äquivalent ist.
+    Also die gleiche Sprache generiert.
+    \uplevel{\begin{solutionorbox}[18em]
+  $G = (\SN, \ST, P, S)$ mit
+  \begin{enumerate}[(i)]
+    \item $\SN = \{S, X\}$,
+    \item $\ST = \{0,1\}$,
+    \item
+        $P = \{S \to 0S \mid 1S \mid 00X \mid 11X$ \\
+        \hspace*{2.1em} $X \to 0X \mid 1X \mid \lambda \}$
+  \end{enumerate}
+    \end{solutionorbox}}
+  \end{parts}
+
+
+\end{questions}
+
+\end{document}
